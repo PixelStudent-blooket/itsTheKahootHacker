@@ -1,0 +1,49 @@
+(async () => {
+  const url = prompt("Kahoot URL or UUID:");
+  if (!url) return;
+
+  const id = url.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)?.[0] || url;
+
+  try {
+    const res = await fetch(`https://kahoot.it{id}/card/?includeKahoot=true`);
+    if (!res.ok) throw new Error(res.status === 401 ? "Private" : "Not Found");
+
+    const { kahoot } = await res.json();
+    let copyText = `--- ALL CORRECT ANSWERS: ${kahoot.title.toUpperCase()} ---\n\n`;
+
+    const table = kahoot.questions.map((q, i) => {
+      const clean = (t) => t ? t.replace(/<[^>]*>/g, '').trim() : "";
+      
+      let allCorrect = [];
+      if (q.choices) {
+        allCorrect = q.choices
+          .filter(c => c.correct || q.type === 'open_ended')
+          .map(c => clean(c.answer));
+      }
+
+      const entry = {
+        "#": i + 1,
+        "Question": clean(q.question),
+        "Answers": allCorrect.join(" | ") || "Check Media"
+      };
+
+      copyText += `${entry["#"]}. ${entry.Question}\n   ANS: ${entry.Answers}\n\n`;
+      return entry;
+    });
+
+    console.clear();
+    console.log(`%c ${kahoot.title.toUpperCase()} `, "color:white;background:#46178f;font-size:20px;padding:5px;");
+    console.table(table);
+
+    const el = document.createElement('textarea');
+    el.value = copyText;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    alert("ALL answers copied to clipboard.");
+  } catch (e) {
+    alert(e.message);
+  }
+})();
