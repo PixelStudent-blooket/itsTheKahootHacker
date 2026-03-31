@@ -1,0 +1,36 @@
+(async () => {
+  const url = prompt("Kahoot URL or ID:");
+  if (!url) return;
+  const id = url.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)?.[0] || url;
+
+  try {
+    const res = await fetch(`https://kahoot.it{id}/card/?includeKahoot=true`);
+    const { kahoot } = await res.json();
+    
+    const map = {};
+    kahoot.questions.forEach(q => {
+      const clean = (t) => t ? t.replace(/<[^>]*>/g, '').trim().toLowerCase() : "";
+      map[clean(q.question)] = q.choices?.filter(c => c.correct).map(c => clean(c.answer)) || [];
+    });
+
+    console.log("%c AUTO-CLICKER ACTIVE ", "background:red;color:white;font-size:20px;");
+
+    setInterval(() => {
+      const qEl = document.querySelector('[data-functional-selector="question-block"]');
+      if (!qEl) return;
+
+      const currentQ = qEl.innerText.trim().toLowerCase();
+      const answers = map[currentQ];
+
+      if (answers) {
+        document.querySelectorAll('button[data-functional-selector^="answer-"]').forEach(btn => {
+          const btnText = btn.innerText.trim().toLowerCase();
+          if (answers.includes(btnText)) {
+            btn.click();
+          }
+        });
+      }
+    }, 100);
+
+  } catch (e) { alert("Error: Private or Invalid ID."); }
+})();
