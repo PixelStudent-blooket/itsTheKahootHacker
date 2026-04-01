@@ -1,0 +1,6 @@
+## Project Modules
+1. **Initialization** (`initialization.js`) - Async wrapper setup.
+2. **Identifier Parser** (`identifier-parser.js`) - URL/UUID extraction.
+3. **API Client** (`api-client.js`) - REST API data retrieval.
+4. **Data Processor** (`data-processor.js`) - Regex sanitization & answer mapping.
+5. **Automation Engine** (`automation-engine.js`) - DOM observation & event emulation.
