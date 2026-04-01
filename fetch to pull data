@@ -1,0 +1,2 @@
+const res = await fetch(`https://kahoot.it{UUID}/card/`);
+const data = await res.json();
