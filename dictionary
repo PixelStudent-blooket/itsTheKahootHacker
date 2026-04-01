@@ -1,0 +1,4 @@
+  const map = Object.fromEntries(kahoot.questions.map(q => [
+    q.question.replace(/<[^>]*>/g, '').trim().toLowerCase(),
+    q.choices?.filter(c => c.correct).map(c => c.answer.replace(/<[^>]*>/g, '').trim().toLowerCase())
+  ]));
