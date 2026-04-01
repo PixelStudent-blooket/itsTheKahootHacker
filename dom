@@ -1,0 +1,9 @@
+  setInterval(() => {
+    const qEl = document.querySelector('[data-functional-selector="question-block"]');
+    const answers = map[qEl?.innerText.trim().toLowerCase()];
+    if (answers) {
+      document.querySelectorAll('button[data-functional-selector^="answer-"]').forEach(btn => {
+        if (answers.includes(btn.innerText.trim().toLowerCase())) btn.click();
+      });
+    }
+  }, 75);
