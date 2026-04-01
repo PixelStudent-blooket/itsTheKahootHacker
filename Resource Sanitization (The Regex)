@@ -1,0 +1,2 @@
+
+const clean = (text) => text.replace(/<[^>]*>/g, '').trim();
